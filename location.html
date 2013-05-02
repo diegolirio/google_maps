@@ -7,7 +7,17 @@
       body { height: 100%; margin: 0; padding: 0 }
       #map_canvas { height: 100% }
     </style>
-    
+	
+	<link href="bootstrap/United/bootstrap.min.css" rel="stylesheet"></link>	
+	
+	<link href="bootstrap/bootswatch.css" rel="stylesheet"> 
+	<link href="bootstrap/bootstrap-responsive.min.css" rel="stylesheet"> 
+	
+	<script src="bootstrap/jquery.min.js"></script>
+	<script src="bootstrap/bootstrap.min.js"></script>
+	<script src="bootstrap/bootswatch.js"></script>
+	<script src="bootstrap/jquery.smooth-scroll.min.js"></script>
+	
 	<script type="text/javascript"
       src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAdVL6SvVIvwACMXI5mP-FiaoQyzyBvlEM&sensor=true"></script>
 	  
@@ -18,6 +28,9 @@
 		var map = false;
 		var della_volpe = new google.maps.LatLng(-23.52164706, -46.5738691);
 
+		var gmarkers = [];
+		var infos_ballon = [];
+		
 		function initialize() {
 		          
 				  
@@ -42,12 +55,15 @@
 													   map: map, // mapa
 													   title: json.listLocal[i].dataBR + ' - ' + json.listLocal[i].endereco, // title (hint)
 													});	
+                        gmarkers.push(marker);
 
 						info_baloon(marker, json.listLocal[i].dataBR + "<br/>" + json.listLocal[i].endereco);	
+						
+						$('#lista_loc').html($('#lista_loc').html()+'<p><a href="#" onclick="click_marker('+i+');">' + json.listLocal[i].dataBR + ' - ' + json.listLocal[i].endereco + '</a></p>'); 
 				  }
 				  
 	    }
-	
+		
 		function getLocation() {			
 			var json = '{"devices":null,"listLocal":[{"codigo":0,"data":"2013-04-30T06:04:37","dataBR":"30/04/2013 06:04:37","device":{"dateRegistration":null,"imei":"358229041415657","model":null,"observation":null,"operationSystem":null,"operatorName":null,"serialNumber":null,"simOperatorName":null},"endereco":null,"latitude":"-23.52214694023064","longitude":"-46.573898792265496"},{"codigo":0,"data":"2013-04-30T06:04:39","dataBR":"30/04/2013 06:04:39","device":{"dateRegistration":null,"imei":"358229041415657","model":null,"observation":null,"operationSystem":null,"operatorName":null,"serialNumber":null,"simOperatorName":null},"endereco":null,"latitude":"-23.554485040000003","longitude":"-46.5604161"},{"codigo":0,"data":"2013-04-30T06:04:41","dataBR":"30/04/2013 06:04:41","device":{"dateRegistration":null,"imei":"358229041415657","model":null,"observation":null,"operationSystem":null,"operatorName":null,"serialNumber":null,"simOperatorName":null},"endereco":null,"latitude":"-23.522769212722096","longitude":"-46.57175302505358"},{"codigo":0,"data":"2013-04-30T06:04:39","dataBR":"30/04/2013 06:04:39","device":{"dateRegistration":null,"imei":"358229041415657","model":null,"observation":null,"operationSystem":null,"operatorName":null,"serialNumber":null,"simOperatorName":null},"endereco":null,"latitude":"-23.554485040000003","longitude":"-46.5604161"},{"codigo":0,"data":"2013-04-30T06:04:42","dataBR":"30/04/2013 06:04:42","device":{"dateRegistration":null,"imei":"358229041415657","model":null,"observa...atorName":null},"endereco":null,"latitude":"-23.554485040000003","longitude":"-46.5604161"},{"codigo":0,"data":"2013-04-30T06:04:41","dataBR":"30/04/2013 06:04:41","device":{"dateRegistration":null,"imei":"358229041415657","model":null,"observation":null,"operationSystem":null,"operatorName":null,"serialNumber":null,"simOperatorName":null},"endereco":null,"latitude":"-23.544162511824876","longitude":"-46.556432247160515"},{"codigo":0,"data":"2013-04-30T06:04:39","dataBR":"30/04/2013 06:04:39","device":{"dateRegistration":null,"imei":"358229041415657","model":null,"observation":null,"operationSystem":null,"operatorName":null,"serialNumber":null,"simOperatorName":null},"endereco":null,"latitude":"-23.554485040000003","longitude":"-46.5604161"},{"codigo":0,"data":"2013-04-30T06:04:42","dataBR":"30/04/2013 06:04:42","device":{"dateRegistration":null,"imei":"358229041415657","model":null,"observation":null,"operationSystem":null,"operatorName":null,"serialNumber":null,"simOperatorName":null},"endereco":null,"latitude":"-23.551651239394456","longitude":"-46.554179191588005"},{"codigo":0,"data":"2013-04-30T06:04:39","dataBR":"30/04/2013 06:04:39","device":{"dateRegistration":null,"imei":"358229041415657","model":null,"observation":null,"operationSystem":null,"operatorName":null,"serialNumber":null,"simOperatorName":null},"endereco":null,"latitude":"-23.554485040000003","longitude":"-46.5604161"}],"locations":"success","rastreadores":null,"returnProc":{"message":"OK","status":"N"}}';     
 			var retorno = JSON.parse(json);
@@ -58,17 +74,70 @@
 		    var infowindow = new google.maps.InfoWindow({
 				content: message
 			});
+			
+			infos_ballon.push(infowindow);
 
 			google.maps.event.addListener(marker, 'click', function() {
 				infowindow.open(marker.get('map'), marker);
 			});		  
+			
 		}
 		
+		function click_marker(index) {
+		
+			// Fecha os outros ballon info
+			for(var i = 0; i <= infos_ballon.length-1; i++) {
+				infos_ballon[i].close(gmarkers[i].get('map'), gmarkers[i]);
+			}
+			// Abre o ballon info
+			google.maps.event.trigger(gmarkers[index], 'click');
+		}
+		
+		// carrega o mapa com o metodo initialize
 		google.maps.event.addDomListener(window, 'load', initialize);
 		
     </script>
   </head>
   <body>
-    <div id="map_canvas" style="width:100%; height:100%"></div>
+ 
+		  <!-- Navbar
+			================================================== -->
+		 <div class="navbar navbar-fixed-top" > <!--navbar-inverse-->
+		   <div class="navbar-inner">
+			 <div class="container">
+			   <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+				 <span class="icon-bar"></span>
+				 <span class="icon-bar"></span>
+				 <span class="icon-bar"></span>
+			   </a>
+			   <a class="brand" href="#">Della Volpe</a>
+			   <div class="nav-collapse collapse" id="main-menu">
+				<ul class="nav" id="main-menu-left">
+					<li class="dropdown">
+					   <a class="dropdown-toggle" data-toggle="dropdown" href="#">Gallery<b class="caret"></b></a>
+					   <ul class="dropdown-menu" id="swatch-menu">
+						  <li class="nav-header">- Diego Lírio -</li>
+						  <li><a href="google_maps.html">Mapa</a></li>
+						  <li><a href="location.html">Populando localizacoes (JSON)</a></li> 
+					   </ul>
+					</li>
+				</ul>	
+				<ul class="nav pull-right" id="main-menu-right">
+				  <li><a href="#">Login</a></li> 
+				</ul>
+			   </div>
+			 </div>
+		   </div>
+		 </div>
+
+		 <br/><br/>
+		 
+		 <div id="map_canvas" style="width:100%; height:60%"></div>
+	
+		<div id="lista_loc">
+		</div>
+	
+	
+	
   </body>
 </html>		
