@@ -67,7 +67,7 @@
 					var loc_click = document.getElementById("id_loc_click");
 					while(loc_click.firstChild)
 						loc_click.removeChild(loc_click.firstChild);			
-					loc_click.appendChild( document.createTextNode(event.latLng.lat() + " ; " + event.latLng.lng()) );
+					loc_click.appendChild( document.createTextNode(event.latLng.lat() + "; " + event.latLng.lng()) );
 					
 				});						  
 				  
@@ -142,12 +142,12 @@
 		 <br/><br/>
 		 
 		 <div id="map_canvas" style="width:100%; height:60%"></div>
-		<div class="span4">
-			<h5>location click: <span id="id_loc_click"></span></h5>
+		<div class="row span12">
+			<h5>location click: <small class="text-success"><span id="id_loc_click"></span></small></h5>
 			<div id="lista_loc">
 			</div>
 		</div>
-		<div class="span9">
+		<div class="row span12">
 			<span class="text-warning">Code Sample</span> >>>
 			<a href="https://developers.google.com/maps/documentation/javascript/examples/?hl=pt-br" target="_blank">https://developers.google.com/maps/documentation/javascript/examples/?hl=pt-br</a>
 		</div>
